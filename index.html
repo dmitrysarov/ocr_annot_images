@@ -1,0 +1,60 @@
+<html>
+    <body>
+        <script>
+            function saveJson(json) {
+                let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json));
+                // what to return in order to show download window?
+                let temp_a = document.createElement('a');
+                temp_a.setAttribute("href", "data:" + data);
+                temp_a.setAttribute("download", "data.json");
+                temp_a.click();
+            }
+            function showImages(elem) {
+                let table = document.getElementById("table");
+                // table.hidden = true;
+                elem.setAttribute("hidden", "true");
+                let json_text = elem.getElementsByTagName("textarea")[0].value;
+                let json = JSON.parse(json_text);
+                for(let i = 0; i < json.length; i++){
+                    let path = json[i]['path'];
+                    let annot = json[i]['annotation'];
+                    let row = table.insertRow();
+                    let ind_cell = row.insertCell(0);
+                    let p = document.createElement('p');
+                    p.textContent = i;
+                    let temp_p = ind_cell.appendChild(p);
+
+                    let img_cell = row.insertCell(1);
+                    let img_element = document.createElement('img');
+                    img_element.setAttribute("src", path);
+                    let temp_img = img_cell.appendChild(img_element);
+
+                    let input_elem = document.createElement('input');
+                    input_elem.setAttribute("type", "text");
+                    input_elem.setAttribute("value", annot);
+                    input_elem.addEventListener('input', function(){json[i]['annotation'] = this.value}, false);
+                    let annot_cell = row.insertCell(2);
+                    let temp_input = annot_cell.appendChild(input_elem);
+
+                    let btn_elem = document.createElement('button');
+                    btn_elem.textContent = "get json";
+                    btn_elem.addEventListener('click', function(){saveJson(json)}, false);
+                    let btn_cell = row.insertCell(3);
+                    let temp_btm = btn_cell.appendChild(btn_elem);
+                    // btn_elem.setAttribute("innerHTML", "get json");
+                }
+                return false;
+            }
+            //d = document.getElementById('table')
+
+        </script>
+
+          <form onsubmit="return showImages(this);">
+              <p><b>Insert json content:</b></p>
+              <p><textarea rows="10" cols="45" name="text" id="textarea"></textarea></p>
+              <p><input type="submit" value="send"></p>
+          </form>
+        <table id="table">
+        </table>
+    </body>
+</html>
